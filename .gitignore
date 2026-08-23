@@ -1,0 +1,18 @@
+# Project specific folders
+.vscode/
+.venv/
+
+# Python internal folders and files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Secret files
+*.env
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
