@@ -1,6 +1,7 @@
 # Project specific folders
 .vscode/
 .venv/
+vectorstore/
 
 # Python internal folders and files
 __pycache__/
