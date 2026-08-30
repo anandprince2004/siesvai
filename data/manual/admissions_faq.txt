@@ -1,14 +1,3 @@
-SIES (Nerul) College of Arts, Science and Commerce (Autonomous) - Admissions FAQ
-
-NOTE TO EDITORS (Anand/Prince): This is a first-pass draft based on publicly
-available information (Careers360, Collegedunia, Shiksha, and past year
-admission notices on the college site). Verify every fact below against the
-current official prospectus and admission notices before using this in the
-chatbot's knowledge base. Update figures (cutoffs, fees, dates) every
-admission cycle since they change yearly.
-
----
-
 Q: What courses does SIES (Nerul) offer at the undergraduate level?
 A: SIES (Nerul) College offers undergraduate programs including B.Com,
 B.Com (Accounting & Finance), B.Com (Banking & Insurance), B.Com (Financial
@@ -24,7 +13,7 @@ Q: What courses does SIES (Nerul) offer at the postgraduate level?
 A: Postgraduate programs include M.Com (Advanced Accountancy), M.Com
 (Business Management), M.A. (Business Economics), M.A. (Multimedia and Mass
 Communication), M.Sc. (Computer Science), M.Sc. (Information Technology),
-and M.Sc. (Environmental Science).
+and M.Sc. (Environmental Science), M.Sc. (Data Science).
 
 Q: How is admission to undergraduate degree courses decided?
 A: Admission to UG courses is merit-based, calculated from Class 12 (HSC)

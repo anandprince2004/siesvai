@@ -1,21 +1,3 @@
-"""
-SIESVAI - Step 2: Data Cleaning
-Removes the repeated site navigation and footer boilerplate from each
-scraped raw file, keeping only the actual page content. Saves cleaned
-output to data/processed/.
-
-Usage:
-    python scripts/clean.py
-
-Notes:
-- The nav block and footer block are identified by fixed marker lines
-  observed in the scraped output (see NAV_END_MARKER / FOOTER_START_MARKER
-  below). If the site's structure changes, these markers may need updating.
-- This script is intentionally simple and rule-based rather than "smart" —
-  for a small, fixed set of pages, explicit markers are more reliable than
-  guessing at HTML structure.
-"""
-
 import os
 
 RAW_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "raw")

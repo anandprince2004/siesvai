@@ -1,13 +1,3 @@
-"""
-SIESVAI - Step 3b: Quick Retrieval Test
-Lets you type a question and see which chunks the vector DB retrieves,
-WITHOUT involving any LLM. Use this to sanity-check that build_vector_db.py
-worked correctly before moving on to the LLM integration step.
-
-Usage:
-    python scripts/test_retrieval.py
-"""
-
 import os
 import chromadb
 from sentence_transformers import SentenceTransformer

@@ -1,23 +1,3 @@
-"""
-SIESVAI - Step 3: Chunking + Embeddings + Vector Database
-Reads all cleaned/manual text files, splits them into small chunks,
-generates embeddings for each chunk, and stores them in a local
-ChromaDB collection on disk.
-
-Usage:
-    python scripts/build_vector_db.py
-
-Input sources:
-    data/processed/   (cleaned scraped pages)
-    data/manual/       (hand-written FAQ content)
-
-Output:
-    vectorstore/        (ChromaDB persistent storage - created automatically)
-
-Run this again any time the source .txt files change, to rebuild the
-vector database from scratch.
-"""
-
 import os
 import glob
 import chromadb
@@ -55,7 +35,6 @@ def chunk_faq_text(text: str) -> list[str]:
 
     for line in lines:
         if line.strip().startswith("Q:") and current_chunk_lines:
-            # Starting a new question — close off the previous Q&A chunk.
             chunks.append("\n".join(current_chunk_lines).strip())
             current_chunk_lines = [line]
         else:
@@ -175,7 +154,7 @@ def build_vector_db() -> None:
     existing_collections = [c.name for c in client.list_collections()]
     if COLLECTION_NAME in existing_collections:
         client.delete_collection(COLLECTION_NAME)
-        print(f"  Removed old '{COLLECTION_NAME}' collection before rebuilding.")
+        print(f"Removed old '{COLLECTION_NAME}' collection before rebuilding.")
 
     collection = client.create_collection(name=COLLECTION_NAME)
 

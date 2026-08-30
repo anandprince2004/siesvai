@@ -1,19 +1,3 @@
-"""
-SIESVAI - Step 1: Data Collection
-Scrapes plain-text content from key SIES ASCN college pages and saves
-each page as a clean .txt file in data/raw/.
-
-Usage:
-    python scripts/scrape.py
-
-Notes:
-- Only handles HTML pages (not PDFs) — PDF extraction is a separate step.
-- Strips navigation, scripts, styles, and footer boilerplate as best as
-  possible, keeping the actual body content.
-- If a page's structure changes or scraping fails, the script logs an error
-  and continues to the next page instead of crashing.
-"""
-
 import os
 import time
 import requests
