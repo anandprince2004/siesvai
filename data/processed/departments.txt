@@ -1,0 +1,32 @@
+Home > Departments
+Departments
+Sr. No:
+Name of Faculty
+Head of Departments
+1
+Dr. Koel Roychoudhury
+Economics
+2
+Mr. Girish Karnad
+Commerce
+3
+Dr. Priyanka Mohan
+Accountancy
+4
+Ms. Bhumika More
+Banking & Insurance
+5
+Mr. Chaitanya Songirkar
+Management Studies
+6
+Dr. Meghna Bhatia
+Information Technology
+7
+Dr. Sheeja. K
+Computer Science
+8
+Mr. Mithun Pillai
+Multimedia & Mass Communication
+9
+Dr. Jyoti G. Koliyar (Jatinder Das)
+Environmental Science
