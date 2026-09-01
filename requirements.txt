@@ -6,3 +6,4 @@ sentence-transformers
 groq
 fastapi
 uvicorn
+pdfplumber
