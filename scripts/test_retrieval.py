@@ -1,6 +1,9 @@
 import os
 import chromadb
 from sentence_transformers import SentenceTransformer
+from dotenv import load_dotenv
+
+load_dotenv()
 
 BASE_DIR = os.path.join(os.path.dirname(__file__), "..")
 VECTOR_DB_DIR = os.path.join(BASE_DIR, "vectorstore")

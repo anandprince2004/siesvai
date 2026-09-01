@@ -2,6 +2,9 @@ import os
 import glob
 import chromadb
 from sentence_transformers import SentenceTransformer
+from dotenv import load_dotenv
+
+load_dotenv()
 
 BASE_DIR = os.path.join(os.path.dirname(__file__), "..")
 SOURCE_DIRS = [
@@ -75,14 +78,73 @@ def chunk_text(text: str, chunk_size: int = CHUNK_SIZE, overlap: int = CHUNK_OVE
 
     return chunks
 
+def is_staff_directory_style(text: str) -> bool:
+    """
+    Detect whether a file is a staff/faculty directory organized into named
+    sections (e.g. 'Department of X', 'OFFICE STAFF', 'JUNIOR COLLEGE'),
+    rather than free-flowing prose or Q&A pairs.
+
+    Checks for two patterns:
+    1. Multiple 'Department of X' headers (college_faculty.txt style).
+    2. Multiple short ALL-CAPS section headers (administrative_staff.txt
+       style: 'OFFICE STAFF', 'LABORATORY STAFF', 'LIBRARY STAFF', etc.)
+    """
+    if text.count("Department of") >= 2:
+        return True
+
+    lines = text.split("\n")
+    caps_header_count = sum(
+        1 for line in lines
+        if line.strip().isupper() and 0 < len(line.strip().split()) <= 4
+    )
+    return caps_header_count >= 2
+
+def chunk_staff_directory(text: str) -> list[str]:
+    """
+    Split a staff/faculty directory into one chunk per section (department,
+    or other named group like 'JUNIOR COLLEGE' / 'LIBRARY'), so a query like
+    'Who is the HOD of Computer Science?' retrieves that department's full,
+    intact staff list rather than an arbitrary character-count slice that
+    may cut a department's list in half or merge two departments together.
+    """
+    lines = text.split("\n")
+
+    def is_section_header(line: str) -> bool:
+        stripped = line.strip()
+        if stripped.startswith("Department of"):
+            return True
+        if stripped.isupper() and len(stripped.split()) <= 4 and stripped:
+            return True
+        return False
+
+    chunks = []
+    current_chunk_lines = []
+
+    for line in lines:
+        if is_section_header(line) and current_chunk_lines:
+            chunks.append("\n".join(current_chunk_lines).strip())
+            current_chunk_lines = [line]
+        else:
+            current_chunk_lines.append(line)
+
+    if current_chunk_lines:
+        chunks.append("\n".join(current_chunk_lines).strip())
+
+    chunks = [c for c in chunks if len(c.strip()) > 10]
+
+    return chunks
+
 def chunk_document(text: str) -> list[str]:
     """
     Route to the right chunking strategy based on the document's structure.
-    FAQ-style docs (Q:/A: format) get split per Q&A pair; everything else
-    gets standard character-count chunking.
+    FAQ-style docs (Q:/A: format) get split per Q&A pair; staff/faculty
+    directories get split per department/section; everything else gets
+    standard character-count chunking.
     """
     if is_faq_style(text):
         return chunk_faq_text(text)
+    if is_staff_directory_style(text):
+        return chunk_staff_directory(text)
     return chunk_text(text)
 
 def load_source_files() -> list[dict]:

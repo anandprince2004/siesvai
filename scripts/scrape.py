@@ -4,8 +4,20 @@ import requests
 from bs4 import BeautifulSoup
 
 PAGES = {
-    "admissions": "https://siesascn.edu.in/admissions",
+    "history": "https://siesascn.edu.in/history",
+    "mission_vision": "https://siesascn.edu.in/mission-vision",
+    "management": "https://siesascn.edu.in/management",
+    "institutional_administration": "https://siesascn.edu.in/institutional-administration",
+    "policies": "https://siesascn.edu.in/policies",
+    "infrastructure": "https://siesascn.edu.in/infrastructure",
+    "library": "https://siesascn.edu.in/library",
+    "hostel": "https://siesascn.edu.in/Recommended_Hostel",
+    "departments": "https://siesascn.edu.in/departments",
     "courses_syllabus": "https://siesascn.edu.in/courses-syllabus",
+    "admissions": "https://siesascn.edu.in/admissions",
+    "research": "https://siesascn.edu.in/research",
+    "college_faculty": "https://siesascn.edu.in/college-faculty",
+    "administrative_staff": "https://siesascn.edu.in/administrative-staff",
     "contact": "https://siesascn.edu.in/contact-us",
 }
 
