@@ -89,3 +89,12 @@ Q: How many students study at SIES (Nerul) College?
 A: The college started in 1998 with 90 students and has grown to a strength
 of approximately 4,700+ students across all its Junior College, UG, and PG
 programs.
+
+Q: What is the fee refund policy if I cancel my admission?
+A: If you cancel your admission, the refund amount depends on timing:
+- 15+ days before the last admission date: 100% refund (minus ₹1,000 processing fee)
+- Less than 15 days before the last admission date: 90% refund
+- Within 15 days after the last admission date: 80% refund
+- 16-30 days after the last admission date: 50% refund
+- More than 30 days after the last admission date: No refund
+These are tentative dates and may be updated per University of Mumbai circulars.
