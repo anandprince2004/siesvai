@@ -3,6 +3,8 @@ const welcome = document.getElementById("welcome");
 const input = document.getElementById("input");
 const sendBtn = document.getElementById("sendBtn");
 
+const COLD_START_MESSAGE_DELAY_MS = 6000;
+
 function autoGrow() {
   input.style.height = "auto";
   input.style.height = Math.min(input.scrollHeight, 120) + "px";
@@ -34,11 +36,24 @@ function addTypingIndicator() {
   row.appendChild(bubble);
   chat.appendChild(row);
   chat.scrollTop = chat.scrollHeight;
+  return bubble;
 }
 
 function removeTypingIndicator() {
   const row = document.getElementById("typing-row");
   if (row) row.remove();
+}
+
+function showColdStartNotice() {
+  const row = document.getElementById("typing-row");
+  if (!row) return;
+  const bubble = row.querySelector(".bubble");
+  if (bubble) {
+    bubble.innerHTML =
+      'Waking up the server — this can take up to a minute after ' +
+      'a period of inactivity. Thanks for your patience! ' +
+      '<div class="typing-dots" style="margin-top:6px;"><span></span><span></span><span></span></div>';
+  }
 }
 
 async function sendMessage(text) {
@@ -50,6 +65,8 @@ async function sendMessage(text) {
   autoGrow();
   sendBtn.disabled = true;
   addTypingIndicator();
+
+  const coldStartTimer = setTimeout(showColdStartNotice, COLD_START_MESSAGE_DELAY_MS);
 
   try {
     const response = await fetch(SIESVAI_CONFIG.API_URL, {
@@ -63,13 +80,15 @@ async function sendMessage(text) {
     }
 
     const data = await response.json();
+    clearTimeout(coldStartTimer);
     removeTypingIndicator();
     addMessage(data.answer, "bot");
 
   } catch (err) {
+    clearTimeout(coldStartTimer);
     removeTypingIndicator();
     addMessage(
-      "Sorry, I couldn't reach the server. Please check that the SIESVAI backend is running and try again.",
+      "Sorry, I couldn't reach the server. Please check your connection and try again in a moment.",
       "bot"
     );
     console.error("SIESVAI chat error:", err);

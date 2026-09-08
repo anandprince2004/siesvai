@@ -1,3 +1,3 @@
 const SIESVAI_CONFIG = {
-  API_URL: "http://localhost:8000/chat",
+  API_URL: "https://siesvai-backend.onrender.com/chat",
 };
