@@ -1,13 +1,13 @@
 import os
 import chromadb
-from sentence_transformers import SentenceTransformer
+from fastembed import TextEmbedding
 from dotenv import load_dotenv
 from groq import Groq
 
 BASE_DIR = os.path.join(os.path.dirname(__file__), "..")
 VECTOR_DB_DIR = os.path.join(BASE_DIR, "vectorstore")
 COLLECTION_NAME = "siesvai_knowledge_base"
-EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
+EMBEDDING_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 TOP_K = 5
 
 GROQ_MODEL = "qwen/qwen3.6-27b"
@@ -69,7 +69,7 @@ def load_groq_client() -> Groq:
 
 def load_vector_db():
     """Load the embedding model and ChromaDB collection."""
-    embedding_model = SentenceTransformer(EMBEDDING_MODEL_NAME)
+    embedding_model = TextEmbedding(model_name=EMBEDDING_MODEL_NAME)
     client = chromadb.PersistentClient(path=VECTOR_DB_DIR)
     collection = client.get_collection(name=COLLECTION_NAME)
     return embedding_model, collection
@@ -103,10 +103,10 @@ def translate_query_for_retrieval(groq_client: Groq, question: str) -> str:
 
 def retrieve_context(question: str, embedding_model, collection, top_k: int = TOP_K) -> list[str]:
     """Embed the question and retrieve the top-k most relevant chunks."""
-    query_embedding = embedding_model.encode([question], convert_to_numpy=True)
+    query_embedding = list(embedding_model.embed([question]))
 
     results = collection.query(
-        query_embeddings=query_embedding.tolist(),
+        query_embeddings=[e.tolist() for e in query_embedding],
         n_results=top_k,
     )
 

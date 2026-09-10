@@ -1,7 +1,7 @@
 import os
 import glob
 import chromadb
-from sentence_transformers import SentenceTransformer
+from fastembed import TextEmbedding
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -16,7 +16,7 @@ COLLECTION_NAME = "siesvai_knowledge_base"
 
 CHUNK_SIZE = 800
 CHUNK_OVERLAP = 100
-EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
+EMBEDDING_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 
 def is_faq_style(text: str) -> bool:
     """
@@ -200,15 +200,12 @@ def build_vector_db() -> None:
     print(f"\nTotal chunks to embed: {len(all_chunks)}")
 
     print(f"\nStep 3: Loading embedding model '{EMBEDDING_MODEL_NAME}' "
-          f"(first run downloads ~80MB, runs on CPU)...")
-    embedding_model = SentenceTransformer(EMBEDDING_MODEL_NAME)
+        f"(fastembed/ONNX - lightweight, no PyTorch required, first run "
+        f"downloads ~80MB)...")
+    embedding_model = TextEmbedding(model_name=EMBEDDING_MODEL_NAME)
 
     print("Step 4: Generating embeddings...")
-    embeddings = embedding_model.encode(
-        all_chunks,
-        show_progress_bar=True,
-        convert_to_numpy=True,
-    )
+    embeddings = list(embedding_model.embed(all_chunks))
 
     print(f"\nStep 5: Saving to ChromaDB at '{VECTOR_DB_DIR}'...")
     client = chromadb.PersistentClient(path=VECTOR_DB_DIR)
@@ -222,7 +219,7 @@ def build_vector_db() -> None:
 
     collection.add(
         ids=all_ids,
-        embeddings=embeddings.tolist(),
+        embeddings=[e.tolist() for e in embeddings],
         documents=all_chunks,
         metadatas=all_metadatas,
     )
