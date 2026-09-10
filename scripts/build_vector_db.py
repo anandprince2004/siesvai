@@ -3,6 +3,7 @@ import glob
 import chromadb
 from fastembed import TextEmbedding
 from dotenv import load_dotenv
+from generic_chunker import is_headed_document, chunk_by_headings
 
 load_dotenv()
 
@@ -56,8 +57,8 @@ def chunk_text(text: str, chunk_size: int = CHUNK_SIZE, overlap: int = CHUNK_OVE
     Tries to break on paragraph/line boundaries where possible, so chunks
     don't cut a sentence awkwardly in half.
 
-    Used for non-FAQ files (e.g. contact.txt, courses_syllabus.txt).
-    FAQ-style files are chunked separately via chunk_faq_text().
+    Used as the last-resort fallback, when a file is neither FAQ-style,
+    staff-directory-style, nor has detectable headings.
     """
     paragraphs = [p.strip() for p in text.split("\n") if p.strip()]
 
@@ -134,18 +135,38 @@ def chunk_staff_directory(text: str) -> list[str]:
 
     return chunks
 
-def chunk_document(text: str) -> list[str]:
+def chunk_document(text: str, source_file: str = "") -> list[str]:
     """
-    Route to the right chunking strategy based on the document's structure.
-    FAQ-style docs (Q:/A: format) get split per Q&A pair; staff/faculty
-    directories get split per department/section; everything else gets
-    standard character-count chunking.
+    Route to the right chunking strategy based on the document's structure,
+    checked in order of how precise/specific the match is:
+
+      1. FAQ-style (Q:/A: format)         -> one chunk per Q&A pair
+      2. Staff/faculty directory          -> one chunk per department/section
+      3. Any other document with detectable headings
+                                           -> one chunk per section, each
+                                              prefixed with "Section: <heading>"
+                                              so the heading text is embedded
+                                              along with the chunk content
+      4. Anything else (unstructured prose) -> plain character-count chunking
+
+    source_file is passed through only for chunk_by_headings' internal
+    metadata (it isn't embedded in the chunk text) and is optional.
+
+    NOTE: this function previously called chunk_faq_text/chunk_staff_directory
+    with a second "filename" argument that those functions don't accept, and
+    never returned its result — both are fixed here.
     """
     if is_faq_style(text):
         return chunk_faq_text(text)
-    if is_staff_directory_style(text):
+    elif is_staff_directory_style(text):
         return chunk_staff_directory(text)
-    return chunk_text(text)
+    elif is_headed_document(text):
+        heading_chunks = chunk_by_headings(
+            text, source_file, max_chars=CHUNK_SIZE, overlap=CHUNK_OVERLAP
+        )
+        return [c["text"] for c in heading_chunks]
+    else:
+        return chunk_text(text)
 
 def load_source_files() -> list[dict]:
     """
@@ -181,13 +202,15 @@ def build_vector_db() -> None:
         return
 
     print(f"\nStep 2: Chunking {len(documents)} document(s) "
-          f"(FAQ-style files split per Q&A pair, others by character count)...")
+          f"(FAQ-style split per Q&A pair, staff directories split per "
+          f"section, headed documents split per section+heading, "
+          f"everything else by character count)...")
     all_chunks = []
     all_metadatas = []
     all_ids = []
 
     for doc in documents:
-        chunks = chunk_document(doc["text"])
+        chunks = chunk_document(doc["text"], doc["source_file"])
         for i, chunk in enumerate(chunks):
             all_chunks.append(chunk)
             all_metadatas.append({
