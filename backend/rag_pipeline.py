@@ -10,7 +10,7 @@ COLLECTION_NAME = "siesvai_knowledge_base"
 EMBEDDING_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 TOP_K = 5
 
-GROQ_MODEL = "qwen/qwen3.6-27b"
+GROQ_MODEL = "qwen/qwen3.8-27b"
 
 SYSTEM_PROMPT = """You are SIESVAI, a helpful assistant for SIES (Nerul) \
 College of Arts, Science and Commerce (Autonomous), Navi Mumbai.
